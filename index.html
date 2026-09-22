@@ -11,8 +11,11 @@
         Password : <input type="password" name ="password">
         <button type="submit">Login</button>
     </form> 
+    <p id="error"></p>
     <script>
-        
+        let params = new URLSearchParams(window.location.search)
+        let error = params.get("error")
+        document.getElementById("error").textContent = error
     </script>
 </body>
 </html>

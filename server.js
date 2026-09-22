@@ -2,8 +2,8 @@ let express =require("express")
 let app = express()
 
 let fakeData = [
-    {id:1,username:"shaan",password:123456},
-    {id:2,username:"rahul",password:789456}
+    {id:1,username:"shaan",password:123456, role:"user"},
+    {id:2,username:"rahul",password:789456 , role:"admin"}
 ]
 
 let currentuser = null
@@ -32,17 +32,17 @@ let CheckLoggedIn = ((req,res,next)=>{
 app.get("/login",(req,res)=>{
     console.log(req.query);
     let user = fakeData.find((u)=>u.username==req.query.username)
-    currentuser = user
+    
     //storing in localstorage
 
     if(!user){
-        res.status(404).send("User Not found")
+       return res.redirect("/loginpage?error=User%20Not%20Found")
     }
     if(user.password!=Number(req.query.password)){
-        res.status(404).send("invalid password")
+        return res.redirect("/loginpage?error=Invalid%20Password")
     }
     // res.status(200).send("user logged in successfully")
-    
+    currentuser = user
     res.redirect("/profile")
     // res.send("data received")
 })
