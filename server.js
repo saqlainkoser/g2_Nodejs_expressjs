@@ -6,18 +6,33 @@ let fakeData = [
     {id:2,username:"rahul",password:789456}
 ]
 
-let currentuser = {}
+let currentuser = null
 
 //middleware
-let CheckLogin = ((req,res,next)=>{
+let CheckNotLogin = ((req,res,next)=>{
+    if(currentuser==null){
+      return res.redirect("/loginpage")
+    }
+
+    console.log("Middleware Working")
+    next()
+})
+
+let CheckLoggedIn = ((req,res,next)=>{
+    if(currentuser!=null){
+      return res.redirect("/profile")
+    }
     console.log("Middleware Working")
     next()
 })
 
 
+
+
 app.get("/login",(req,res)=>{
     console.log(req.query);
     let user = fakeData.find((u)=>u.username==req.query.username)
+    currentuser = user
     //storing in localstorage
 
     if(!user){
@@ -32,14 +47,14 @@ app.get("/login",(req,res)=>{
     // res.send("data received")
 })
 
-app.get("/loginpage",(req,res)=>{
+app.get("/loginpage",CheckLoggedIn,(req,res)=>{
     res.sendFile( __dirname +"/index.html")
 })
 
 //http://localhost:3077/loginpage
 
 
-app.get("/profile",CheckLogin,(req,res)=>{
+app.get("/profile",CheckNotLogin,(req,res)=>{
     res.send(`
         <h1>Welcome ${currentuser.username}<h1>
         <a href="/logout">Logout</a>
@@ -47,7 +62,7 @@ app.get("/profile",CheckLogin,(req,res)=>{
 })
 
 app.get("/logout",(req,res)=>{
-    currentuser = {}
+    currentuser = null
     res.redirect("/loginpage")
 })
 
